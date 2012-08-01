@@ -16,5 +16,5 @@ setup(
     include_package_data = True,
     zip_safe=False,
     license="None",
-    install_requires = ["requests"]
+    install_requires = ["requests", "PIL"]
 )

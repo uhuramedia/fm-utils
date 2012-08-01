@@ -1,4 +1,8 @@
-from PIL import Image, ImageFilter
+try:
+    import Image, ImageFilter
+except ImportError:
+    from PIL import Image, ImageFilter
+
 from decimal import Decimal
 
 

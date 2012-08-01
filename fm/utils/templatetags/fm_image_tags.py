@@ -5,7 +5,10 @@ import os
 import requests
 import hashlib
 import subprocess
-from PIL import Image
+try:
+    import Image
+except ImportError:
+    from PIL import Image
 
 from django import template
 from django.conf import settings
@@ -26,11 +29,12 @@ def image_scale(image, width, height, upscale=True, crop=False, center=True):
             path = image.path
 
         # determine format, extensions
-        if path.endswith('png'):
+        if path.lower().endswith('png'):
             img_format, extension = "PNG", "png"
         else:
             img_format, extension = "JPEG", "jpg"
         suffix = '-%dx%d.%s' % (width, height, extension)
+        exp = re.compile('\.(png|jpg|jpeg|gif)$', re.IGNORECASE)
 
         if type(image) == unicode and image.startswith("http:"):
             # hash filename
@@ -38,8 +42,8 @@ def image_scale(image, width, height, upscale=True, crop=False, center=True):
             # construct paths + urls where image + scaled version would be
             path = os.path.join(settings.MEDIA_ROOT, 'downloaded_cache', filename)
             media_url = settings.MEDIA_URL + 'downloaded_cache/' + filename
-            scale_path = re.sub('\.(png|jpg|jpeg|gif)$', suffix, path)
-            scale_url = re.sub('\.(png|jpg|jpeg|gif)$', suffix, media_url)
+            scale_path = exp.sub(suffix, path)
+            scale_url = exp.sub(suffix, media_url)
             # check if scaled version already there
             if os.path.exists(scale_path):
                 return scale_url
@@ -52,8 +56,8 @@ def image_scale(image, width, height, upscale=True, crop=False, center=True):
                 out_file.close()
         else:
             # work normally with Django image object
-            scale_path = re.sub('\.(png|jpg|jpeg|gif)$', suffix, path)
-            scale_url = re.sub('\.(png|jpg|jpeg|gif)$', suffix, image.url)
+            scale_path = exp.sub(suffix, path)
+            scale_url = exp.sub(suffix, image.url)
             path = image.path
             # check if scaled version already there
             if os.path.exists(scale_path):
