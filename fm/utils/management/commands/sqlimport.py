@@ -20,4 +20,4 @@ class Command(BaseCommand):
         # first make a dump haha!
         os.system('mysqldump -u %s --password="%s" %s | gzip > var/%s.dump.sql.gz' % (user, password, db, ts))
         # then load new sql
-        os.system('gunzip < var/dump.sql.gz | mysql -u %s %s %s' % (user, password, db))
+        os.system('gunzip < var/dump.sql.gz | mysql -u %s --password="%s" %s' % (user, password, db))
